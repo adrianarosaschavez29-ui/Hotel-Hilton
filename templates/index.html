@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Hilton</title>
+
+    <style>
+
+        body{
+            background-color: #ffe5e5;
+            font-family: Arial;
+            margin: 0;
+            padding: 0;
+        }
+
+        .titulo{
+            background-color: white;
+            width: 80%;
+            margin: 30px auto;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 10px pink;
+        }
+
+        .titulo h1{
+            color: red;
+            font-size: 55px;
+        }
+
+        .contenedor{
+            width: 90%;
+            margin: auto;
+            background-color: #fff0f0;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px lightcoral;
+        }
+
+        h2{
+            color: darkred;
+        }
+
+        input{
+            width: 98%;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 2px solid #ffb3b3;
+            font-size: 16px;
+        }
+
+        button{
+            width: 100%;
+            padding: 15px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background-color: darkred;
+        }
+
+        table{
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td{
+            border: 2px solid red;
+        }
+
+        th{
+            background-color: red;
+            color: white;
+            padding: 10px;
+        }
+
+        td{
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="titulo">
+        <h1>Hotel Hilton</h1>
+    </div>
+
+    <div class="contenedor">
+
+        <h2>Registro de Huéspedes</h2>
+
+        <form method="POST">
+
+            <input type="text" name="nombre" placeholder="Nombre del Huésped" required>
+
+            <input type="number" name="habitacion" placeholder="Número de Habitación" required>
+
+            <input type="number" name="dias" placeholder="Días de Hospedaje" required>
+
+            <input type="number" name="precio" placeholder="Precio" required>
+
+            <button type="submit">Guardar Huésped</button>
+
+        </form>
+
+        <h2>Lista de Huéspedes</h2>
+
+        <table>
+
+            <tr>
+                <th>Nombre</th>
+                <th>Habitación</th>
+                <th>Días</th>
+                <th>Precio</th>
+            </tr>
+
+            {% for h in huespedes %}
+            <tr>
+                <td>{{ h.nombre }}</td>
+                <td>{{ h.habitacion }}</td>
+                <td>{{ h.dias }}</td>
+                <td>S/ {{ h.precio }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</body>
+</html>
