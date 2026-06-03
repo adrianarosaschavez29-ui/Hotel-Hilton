@@ -2,143 +2,149 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Hilton</title>
-
-    <style>
-
-        body{
-            background-color: #ffe5e5;
-            font-family: Arial;
-            margin: 0;
-            padding: 0;
-        }
-
-        .titulo{
-            background-color: white;
-            width: 80%;
-            margin: 30px auto;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0px 0px 10px pink;
-        }
-
-        .titulo h1{
-            color: red;
-            font-size: 55px;
-        }
-
-        .contenedor{
-            width: 90%;
-            margin: auto;
-            background-color: #fff0f0;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0px 0px 10px lightcoral;
-        }
-
-        h2{
-            color: darkred;
-        }
-
-        input{
-            width: 98%;
-            padding: 15px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            border: 2px solid #ffb3b3;
-            font-size: 16px;
-        }
-
-        button{
-            width: 100%;
-            padding: 15px;
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        button:hover{
-            background-color: darkred;
-        }
-
-        table{
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        table, th, td{
-            border: 2px solid red;
-        }
-
-        th{
-            background-color: red;
-            color: white;
-            padding: 10px;
-        }
-
-        td{
-            background-color: white;
-            padding: 10px;
-            text-align: center;
-        }
-
-    </style>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
-    <div class="titulo">
+    {% if session.get('usuario') %}
+    <p class="bienvenida-usuario">
+        👤 Bienvenido {{ session['usuario'] }} | <a href="/logout">Cerrar sesión</a>
+    </p>
+    {% endif %}
+
+    <header>
         <h1>Hotel Hilton</h1>
+        <p>¡Lujo, confort y experiencias inolvidables!</p>
+    </header>
+
+    <nav>
+        <a href="/"><i class="fas fa-house"></i> Inicio</a>
+        <a href="/habitaciones"><i class="fas fa-bed"></i> Habitaciones</a>
+        <a href="/contacto"><i class="fas fa-phone"></i> Contacto</a>
+        <a href="/registro"><i class="fas fa-clipboard-list"></i> Registro</a>
+        
+        {% if not session.get('usuario') %}
+            <a href="/Iniciar Sesión"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+            <a href="/registro_usuario"><i class="fas fa-user-plus"></i> Registro Usuario</a>
+        {% endif %}
+    </nav>
+
+    <div class="barra-reserva">
+        <div class="campo">
+            <label>Fechas Entrada</label>
+            <input type="text" id="entrada" placeholder="Entrada">
+        </div>
+        <div class="campo">
+            <label>Salida</label>
+            <input type="text" id="salida" placeholder="Salida">
+        </div>
+        <div class="campo">
+            <label>Configuración</label>
+            <button type="button" onclick="abrirModal()">Configurar Huéspedes</button>
+            <input type="hidden" name="habitaciones" id="habitaciones" value="1">
+            <input type="hidden" name="adultos" id="adultos" value="1">
+            <input type="hidden" name="ninos" id="ninos" value="0">
+        </div>
+        <a href="/tarifas" class="btn-tarifas-link">
+            <button class="btn-tarifas">Ver tarifas</button>
+        </a>
     </div>
 
-    <div class="contenedor">
-
-        <h2>Registro de Huéspedes</h2>
-
-        <form method="POST">
-
-            <input type="text" name="nombre" placeholder="Nombre del Huésped" required>
-
-            <input type="number" name="habitacion" placeholder="Número de Habitación" required>
-
-            <input type="number" name="dias" placeholder="Días de Hospedaje" required>
-
-            <input type="number" name="precio" placeholder="Precio" required>
-
-            <button type="submit">Guardar Huésped</button>
-
-        </form>
-
-        <h2>Lista de Huéspedes</h2>
-
-        <table>
-
-            <tr>
-                <th>Nombre</th>
-                <th>Habitación</th>
-                <th>Días</th>
-                <th>Precio</th>
-            </tr>
-
-            {% for h in huespedes %}
-            <tr>
-                <td>{{ h.nombre }}</td>
-                <td>{{ h.habitacion }}</td>
-                <td>{{ h.dias }}</td>
-                <td>S/ {{ h.precio }}</td>
-            </tr>
-            {% endfor %}
-
-        </table>
-
+    <div class="bienvenida">
+        <div class="icono-hotel"><i class="fas fa-hotel"></i></div>
+        <h2>¡Bienvenidos al Hotel Hilton!</h2>
+        <p>Disfruta de nuestras habitaciones de lujo, atención personalizada y los mejores servicios para hacer de tu estadía una experiencia única.</p>
     </div>
 
+    <div class="paneles">
+        <div class="registro">
+            <h2>Registro de Huéspedes</h2>
+            <form method="POST" action="/">
+                <input type="text" name="nombre" placeholder="Nombre del huésped" required>
+                <input type="number" name="habitacion" placeholder="Habitación" required>
+                <input type="text" id="entrada_form" name="entrada" placeholder="Fecha de entrada" required>
+                <input type="text" id="salida_form" name="salida" placeholder="Fecha de salida" required>
+                <select name="tipo_habitacion">
+                    <option value="simple">Habitación Simple (S/. 150)</option>
+                    <option value="doble">Habitación Doble (S/. 250)</option>
+                    <option value="suite">Suite Premium (S/. 500)</option>
+                </select>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+
+        <div class="servicios">
+            <h2>Nuestros Servicios</h2>
+            <p><i class="fas fa-wifi icono"></i> WiFi Gratis</p>
+            <p><i class="fas fa-square-parking icono"></i> Aparcamiento</p>
+            <p><i class="fas fa-elevator icono"></i> Ascensor</p>
+            <p><i class="fas fa-clock icono"></i> Atención 24/7</p>
+            <p><i class="fas fa-tv icono"></i> Smart TV</p>
+            <p><i class="fas fa-bell-concierge icono"></i> Servicio a la habitación 24/7</p>
+            <p><i class="fas fa-wine-glass icono"></i> Minibar incluido</p>
+        </div>
+    </div>
+
+    {% if resultado %}
+    <div class="tarjeta-total">
+        <h2>Resumen de la Reserva Reciente</h2>
+        <p>Tipo de habitación: <strong>{{ resultado.tipo.capitalize() }}</strong></p>
+        <p>Noches: <strong>{{ resultado.dias }}</strong></p>
+        <p>Precio por noche: <strong>S/. {{ resultado.precio }}</strong></p>
+        <div class="precio">Total: S/. {{ resultado.total }}</div>
+    </div>
+    {% endif %}
+
+    <div class="modal" id="modalHuespedes">
+        <div class="modal-content">
+            <h2>MÁXIMO 8 HUÉSPEDES POR HABITACIÓN</h2>
+            <div class="fila-modal">
+                <div>
+                    <h3>Habitaciones</h3>
+                    <p>Máximo 3 habitaciones</p>
+                </div>
+                <div class="control">
+                    <button type="button" onclick="cambiar('habitaciones', -1)">-</button>
+                    <span id="txtHabitaciones">1</span>
+                    <button type="button" onclick="cambiar('habitaciones', 1)">+</button>
+                </div>
+            </div>
+            <div class="fila-modal">
+                <div>
+                    <h3>Adultos</h3>
+                    <p>Máximo 8 huéspedes</p>
+                </div>
+                <div class="control">
+                    <button type="button" onclick="cambiar('adultos', -1)">-</button>
+                    <span id="txtAdultos">1</span>
+                    <button type="button" onclick="cambiar('adultos', 1)">+</button>
+                </div>
+            </div>
+            <div class="fila-modal">
+                <div>
+                    <h3>Niños</h3>
+                    <p>Máximo 8 huéspedes</p>
+                </div>
+                <div class="control">
+                    <button type="button" onclick="cambiar('ninos', -1)">-</button>
+                    <span id="txtNinos">0</span>
+                    <button type="button" onclick="cambiar('ninos', 1)">+</button>
+                </div>
+            </div>
+            <br>
+            <button type="button" onclick="cerrarModal()">Listo</button>
+        </div>
+    </div>
+
+    <footer>
+        © 2026 Hotel Hilton. Todos los derechos reservados.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
